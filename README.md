@@ -7,6 +7,8 @@ Also generate a transcript of the video and a subtitle file.
 First you must to install all the dependences with the command 
 ~~~
 pip install -r requirements.txt
+
+sudo apt install imagemagick -y
 ~~~
 Then you can use the software using the command from the command line
 
@@ -27,6 +29,12 @@ options:<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Discard silence clips<br>
 
 ## Example
+
+This will apply denoise filter, generate transcript apply subtitles and cut silences and save the video discarding the silenced clips
+~~~
+python3 main.py prueba.mp4 --pipeline denoise transcript subtitles **trim_by_silence** save_join --discard_silence True
+~~~
+
 This will result in a merge of every non-silence part 
 ~~~
 python main.py vid_1.mp4 --pipeline denoise transcript subtitles trim_by_silence save_separated_video -c 1
