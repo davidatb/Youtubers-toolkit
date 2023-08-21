@@ -2,12 +2,29 @@ import numpy as np
 import moviepy.editor as editor
 from moviepy.editor import VideoFileClip
 from moviepy.video.tools.subtitles import SubtitlesClip
+from moviepy.audio.fx import volumex
 
 
 class VideoProcessor:
+
+    @staticmethod
+    def apply_gain(**kwargs):
+        input_video_file_clip = kwargs["input_video_file_clip"]
+        gain_factor = kwargs.get("gain_factor", 1.0)  # 1.0 means no change
+
+        # Apply gain to the audio
+        amplified_audio = input_video_file_clip.audio.fx(
+            volumex.volumex, gain_factor)
+        input_video_file_clip = input_video_file_clip.set_audio(
+            amplified_audio)
+
+        kwargs["input_video_file_clip"] = input_video_file_clip
+        return kwargs
+
     @staticmethod
     def _get_subclip_volume(subclip, second, interval):
-        cut = subclip.subclip(second, second + interval).audio.to_soundarray(fps=44100)
+        cut = subclip.subclip(
+            second, second + interval).audio.to_soundarray(fps=44100)
         return np.sqrt(((1.0 * cut) ** 2).mean())
 
     @staticmethod
@@ -28,7 +45,8 @@ class VideoProcessor:
         if os.path.exists(audio_file_name):
             os.remove(audio_file_name)
 
-        input_video_file_clip.audio.write_audiofile(audio_file_name, codec="pcm_s16le")
+        input_video_file_clip.audio.write_audiofile(
+            audio_file_name, codec="pcm_s16le")
         return audio_file_name
 
     @staticmethod
@@ -86,7 +104,8 @@ class VideoProcessor:
             kwargs["filename"],
         )
 
-        audio_file_name = VideoProcessor._get_audio(input_video_file_clip, filename)
+        audio_file_name = VideoProcessor._get_audio(
+            input_video_file_clip, filename)
 
         model = whisper.load_model("base")
         results = model.transcribe(audio_file_name)
@@ -119,12 +138,14 @@ class VideoProcessor:
             kwargs["filename"],
         )
 
-        audio_file_name = VideoProcessor._get_audio(input_video_file_clip, filename)
+        audio_file_name = VideoProcessor._get_audio(
+            input_video_file_clip, filename)
 
         device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
         model = pretrained.dns64().to(device)
         wav, source = torchaudio.load(audio_file_name)
-        wav = convert_audio(wav.to(device), source, model.sample_rate, model.chin)
+        wav = convert_audio(wav.to(device), source,
+                            model.sample_rate, model.chin)
         with torch.no_grad():
             denoised = model(wav[None])[0]
 
@@ -156,7 +177,8 @@ class VideoProcessor:
             )
 
         subtitles = SubtitlesClip(subtitles_filename, generator)
-        video_list = [input_video_file_clip, subtitles.set_pos(("center", "bottom"))]
+        video_list = [input_video_file_clip,
+                      subtitles.set_pos(("center", "bottom"))]
         video_with_subs = editor.CompositeVideoClip(video_list)
 
         kwargs["input_video_file_clip"] = video_with_subs
@@ -235,7 +257,8 @@ class VideoProcessor:
         for i in range(1, len(change_times)):
             if discard_silence and i % 2 != first_piece_silence:
                 continue
-            new = input_video_file_clip.subclip(change_times[i - 1], change_times[i])
+            new = input_video_file_clip.subclip(
+                change_times[i - 1], change_times[i])
             clips.append(new)
 
         kwargs["clips"] = clips

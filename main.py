@@ -1,6 +1,7 @@
 import argparse
 from utils import str2bool
 from toolkit import VideoProcessor
+import os
 
 
 functions_dict = {
@@ -13,6 +14,7 @@ functions_dict = {
     "save_video": VideoProcessor.save_video,
     "set_vertical": VideoProcessor.set_vertical,
     "set_horizontal": VideoProcessor.set_horizontal,
+    "apply_gain": VideoProcessor.apply_gain,
 }
 
 
@@ -20,6 +22,12 @@ parser = argparse.ArgumentParser(description="Multiples tools for video editing"
 parser.add_argument(
     "input_file", type=str, nargs="+", help="The video file you want modified"
 )
+
+parser.add_argument(
+    "-g", "--gain_factor", type=float, default=1.0, 
+    help="Factor to amplify the audio volume. E.g., 2.0 doubles the volume, 0.5 halves it."
+)
+
 
 parser.add_argument(
     "--pipeline",
@@ -51,6 +59,9 @@ parser.add_argument(
 
 args = parser.parse_args()
 
+gain_factor = args.gain_factor
+
+
 if __name__ == "__main__":
     input_files = args.input_file
     pipeline = args.pipeline
@@ -65,6 +76,7 @@ if __name__ == "__main__":
             "clip_interval": clip_interval,
             "sound_threshold": sound_threshold,
             "discard_silence": discard_silence,
+            "gain_factor": gain_factor,
         }
 
         kwargs = video_processor.get_video_data(**kwargs)
@@ -77,3 +89,20 @@ if __name__ == "__main__":
 
             print(f"Applying {step_in_pipeline} to {input_file}")
             kwargs = functions_dict[step_in_pipeline](**kwargs)
+
+    # Despues de procesar todos los pasos del pipeline para todos los archivos de entrada
+for input_file in input_files:
+    audio_file_name = f"{input_file.split('/')[-1].split('.')[0]}_audio.wav"
+    denoised_file_name = f"{input_file.split('/')[-1].split('.')[0]}_denoised.wav"
+    
+    print(f"Trying to delete {audio_file_name} and {denoised_file_name}...")  # Add this line
+    
+    if os.path.exists(audio_file_name):
+        os.remove(audio_file_name)
+        print(f"Deleted {audio_file_name}")  # Add this line
+    
+    if os.path.exists(denoised_file_name):
+        os.remove(denoised_file_name)
+        print(f"Deleted {denoised_file_name}")  # Add this line
+
+

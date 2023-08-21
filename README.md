@@ -30,10 +30,21 @@ options:<br>
 
 ## Example
 
+Structure
+~~~
+ python3 main.py [input_file] --[arg1_name] [arg1_value] ... --pipeline [pipeline_step1] [pipeline_step2] ...
+~~~
+
+This will apply denoise filter, generate transcript apply subtitles and cut silences and save the video discarding the silenced clips and use 600 milliseconds to consider silence to both videos
+~~~
+ python3 main.py video1.mp4 video2.mp4 --clip_interval 0.6 --pipeline denoise trim_by_silence save_join --discard_silence True
+~~~
+
 This will apply denoise filter, generate transcript apply subtitles and cut silences and save the video discarding the silenced clips
 ~~~
 python3 main.py prueba.mp4 --pipeline denoise transcript subtitles **trim_by_silence** save_join --discard_silence True
 ~~~
+
 
 This will result in a merge of every non-silence part 
 ~~~
