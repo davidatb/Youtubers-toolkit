@@ -1,0 +1,8 @@
+Titulo:
+Título: Creación de un login sencillo en Figma
+
+Descripcion:
+Descripción: Aprende cómo crear un login sencillo utilizando Figma. En este video tutorial, te guiaré paso a paso para practicar tus habilidades en diseño y mejorar tus conocimientos en Figma. Desde la creación de un frame hasta la implementación de textos, rectángulos y botones, podrás obtener un diseño de login básico y funcional. ¡No te lo pierdas!
+
+Hashtags:
+Hashtags: #Figma #DiseñoWeb #LoginSencillo #Tutorial #DiseñoUI

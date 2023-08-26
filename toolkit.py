@@ -3,9 +3,25 @@ import moviepy.editor as editor
 from moviepy.editor import VideoFileClip
 from moviepy.video.tools.subtitles import SubtitlesClip
 from moviepy.audio.fx import volumex
+from openai_integration import generate_metadata_from_transcription, save_to_txt
 
 
 class VideoProcessor:
+    
+    @staticmethod
+    def openai_process(**kwargs):
+        transcript_file_name = kwargs["transcript_file_name"]
+        
+        with open(transcript_file_name, 'r') as file:
+            transcript = file.read()
+            
+        title, description, hashtags = generate_metadata_from_transcription(transcript)
+        
+        # Guarda los resultados en un txt o de la forma que prefieras
+        # También puedes agregar los resultados a kwargs y retornarlos si es necesario.
+        save_to_txt(f"{kwargs['filename']}_metadata.txt", title, description, hashtags)
+        
+        return kwargs
 
     @staticmethod
     def apply_gain(**kwargs):

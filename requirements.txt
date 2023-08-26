@@ -5,3 +5,4 @@ matplotlib==3.7.2
 moviepy==1.0.3
 git+https://github.com/openai/whisper.git 
 denoiser
+openai

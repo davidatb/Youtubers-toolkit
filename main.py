@@ -15,6 +15,7 @@ functions_dict = {
     "set_vertical": VideoProcessor.set_vertical,
     "set_horizontal": VideoProcessor.set_horizontal,
     "apply_gain": VideoProcessor.apply_gain,
+    "openai_process": VideoProcessor.openai_process,
 }
 
 
@@ -55,11 +56,22 @@ parser.add_argument(
     nargs="?",
     help="Discard silence clips",
 )
+parser.add_argument(
+    "--use_openai",
+    const=True,
+    default=False,
+    type=str2bool,
+    nargs="?",
+    help="Decide if you want to process the video using OpenAI",
+)
+
 
 
 args = parser.parse_args()
 
 gain_factor = args.gain_factor
+use_openai = args.use_openai
+
 
 
 if __name__ == "__main__":
@@ -78,7 +90,7 @@ if __name__ == "__main__":
             "discard_silence": discard_silence,
             "gain_factor": gain_factor,
         }
-
+        
         kwargs = video_processor.get_video_data(**kwargs)
 
         for step_in_pipeline in pipeline:
@@ -89,6 +101,11 @@ if __name__ == "__main__":
 
             print(f"Applying {step_in_pipeline} to {input_file}")
             kwargs = functions_dict[step_in_pipeline](**kwargs)
+            
+            # Luego de que todas las funciones del pipeline han sido aplicadas al video
+        if use_openai:
+            print(f"Applying openai_process to {input_file}")
+            kwargs = functions_dict["openai_process"](**kwargs)
 
     # Despues de procesar todos los pasos del pipeline para todos los archivos de entrada
 for input_file in input_files:

@@ -9,6 +9,12 @@ First you must to install all the dependences with the command
 pip install -r requirements.txt
 
 sudo apt install imagemagick -y
+
+sudo nano ~/.bashrc
+
+And add in the end of file
+echo "export OPENAI_API_KEY='tu_clave_api'" >> ~/.bashrc
+Replace tu_clave_api with your api **key**
 ~~~
 Then you can use the software using the command from the command line
 
@@ -35,14 +41,14 @@ Structure
  python3 main.py [input_file] --[arg1_name] [arg1_value] ... --pipeline [pipeline_step1] [pipeline_step2] ...
 ~~~
 
-This will apply denoise filter, generate transcript apply subtitles and cut silences and save the video discarding the silenced clips and use 600 milliseconds to consider silence to both videos
+This will apply denoise filter, generate transcript apply subtitles and cut silences and save the video discarding the silenced clips and use 600 milliseconds to consider silence to both videos add transcript and use gpt for generate metadata seo
 ~~~
- python3 main.py video1.mp4 video2.mp4 --clip_interval 0.6 --pipeline denoise trim_by_silence save_join --discard_silence True
+python3 main.py video1.mp4 video2.mp4 --clip_interval 0.6 --gain_factor 2.0 --discard_silence True --pipeline denoise apply_gain set_vertical trim_by_silence save_join transcript --use_openai
 ~~~
 
 This will apply denoise filter, generate transcript apply subtitles and cut silences and save the video discarding the silenced clips
 ~~~
-python3 main.py prueba.mp4 --pipeline denoise transcript subtitles **trim_by_silence** save_join --discard_silence True
+python3 main.py prueba.mp4 --pipeline denoise **transcript subtitles** **trim_by_silence** save_join --discard_silence True
 ~~~
 
 
