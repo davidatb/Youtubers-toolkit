@@ -4,6 +4,7 @@ from moviepy.editor import VideoFileClip
 from moviepy.video.tools.subtitles import SubtitlesClip
 from moviepy.audio.fx import volumex
 from openai_integration import generate_metadata_from_transcription, save_to_txt
+from tqdm import tqdm
 
 
 class VideoProcessor:
@@ -247,7 +248,7 @@ class VideoProcessor:
 
         print("Chunking video...")
         volumes = []
-        for i in np.arange(0, input_video_file_clip.duration, clip_interval):
+        for i in tqdm(np.arange(0, input_video_file_clip.duration, clip_interval)):
             if input_video_file_clip.duration <= i + clip_interval:
                 continue
             volumes.append(
