@@ -15,6 +15,7 @@ sudo nano ~/.bashrc
 And add in the end of file
 echo "export OPENAI_API_KEY='tu_clave_api'" >> ~/.bashrc
 Replace tu_clave_api with your api **key**
+After you need restart shell source ~/.zshrc or source ~/.bashrc
 ~~~
 Then you can use the software using the command from the command line
 
