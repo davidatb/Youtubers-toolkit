@@ -8,7 +8,7 @@ First you must to install all the dependences with the command
 ~~~
 pip install -r requirements.txt
 
-sudo apt install imagemagick -y
+sudo apt install imagemagick ffmpeg -y
 
 sudo nano ~/.bashrc
 
