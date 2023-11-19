@@ -24,6 +24,8 @@ def generate_metadata_from_transcription(transcription):
     
     # Procesar la respuesta 
     assistant_response = response.choices[0].message['content']
+    print("Respuesta de OpenAI:", assistant_response)
+    
 
     # Aquí va el nuevo bloque de código:
     lines = assistant_response.split('\n')
@@ -41,6 +43,10 @@ def generate_metadata_from_transcription(transcription):
 
 def save_to_txt(filename, title, description, hashtags):
     with open(filename, 'w') as file:
-        file.write("Titulo:\n" + title + "\n\n")
-        file.write("Descripcion:\n" + description + "\n\n")
-        file.write("Hashtags:\n" + ' '.join(hashtags))
+        if title:
+            file.write("Titulo:\n" + title + "\n\n")
+        if description:
+            file.write("Descripcion:\n" + description + "\n\n")
+        if hashtags:
+            file.write("Hashtags:\n" + ' '.join(hashtags))
+

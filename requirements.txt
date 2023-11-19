@@ -6,3 +6,5 @@ moviepy==1.0.3
 git+https://github.com/openai/whisper.git 
 denoiser
 openai
+tqdm
+Pillow==8.3.2
