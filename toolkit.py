@@ -1,6 +1,9 @@
+# -*- coding: utf-8 -*-
+
+import os
 import numpy as np
 import moviepy.editor as editor
-from moviepy.editor import VideoFileClip
+from moviepy.editor import VideoFileClip, concatenate_videoclips
 from moviepy.video.tools.subtitles import SubtitlesClip
 from moviepy.audio.fx import volumex
 from openai_integration import generate_metadata_from_transcription, save_to_txt
@@ -8,6 +11,42 @@ from tqdm import tqdm
 
 
 class VideoProcessor:
+    
+    @staticmethod
+    def split_video(input_file, max_size_mb=200):
+        print(f"Dividiendo {input_file} en fragmentos...")
+        """
+        Divide un video en varios fragmentos, cada uno no mayor a max_size_mb.
+        :param input_file: Ruta del archivo de video.
+        :param max_size_mb: Size max en MB para cada fragmento.
+        :return: Lista de rutas de archivos de los fragmentos.
+        """
+        clip = VideoFileClip(input_file)
+        total_duration = clip.duration
+        fragment_duration = total_duration * (max_size_mb / os.path.getsize(input_file) * 1024 * 1024)
+        
+        fragments = []
+        for start in np.arange(0, total_duration, fragment_duration):
+            end = min(start + fragment_duration, total_duration)
+            fragment_file = input_file.replace('.mp4', f'_fragment_{int(start)}.mp4')
+            clip.subclip(start, end).write_videofile(fragment_file, codec='libx264')
+            fragments.append(fragment_file)
+        
+        return fragments
+
+    @staticmethod
+    def combine_fragments(fragments, output_file):
+        print(f"Combinando fragmentos en {output_file}...")
+        """
+        Combina varios fragmentos de video en un solo archivo.
+        :param fragments: Lista de rutas de archivos de los fragmentos.
+        :param output_file: Ruta del archivo de video combinado.
+        """
+        clips = [VideoFileClip(fragment) for fragment in fragments]
+        final_clip = concatenate_videoclips(clips)
+        final_clip.write_videofile(output_file, codec='libx264')
+
+
     
     @staticmethod
     def openai_process(**kwargs):
@@ -26,6 +65,7 @@ class VideoProcessor:
 
     @staticmethod
     def apply_gain(**kwargs):
+        print("Aplicando ganancia al audio...")
         input_video_file_clip = kwargs["input_video_file_clip"]
         gain_factor = kwargs.get("gain_factor", 1.0)  # 1.0 means no change
 
